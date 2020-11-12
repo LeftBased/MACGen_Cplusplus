@@ -96,18 +96,6 @@ void DoGen2(int num, std::string filename) {
     std::cout << "Saved file to: " + filename + "\n";
     exit(0);
 }
-bool AppendCharToCharArray(char* array, size_t n, char c)
-{
-    size_t sz = std::strlen(array);
-
-    if (sz + 1 < n)
-    {
-        array[sz] = c;
-        array[sz + 1] = '\0';
-    }
-
-    return (sz + 1 < n);
-}
 void pause()
 {
     std::cin.clear();
