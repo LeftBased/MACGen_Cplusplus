@@ -8,18 +8,28 @@
 #include <random>       // std::default_random_engine
 #include <chrono>       // std::chrono::system_clock
 #include <fstream> // for file i/o
-#include <iomanip>
-
+#include <iomanip> //get time
+#include <thread> // multi-threading
+/* Public Declarations */
 char hex[30];
-
+int num;
+int num2;
+/* Version 0.2a - Added threading to the functions. */
+void pause() {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::string dummy;
+    std::cout << "Press any key to exit . . .";
+    std::getline(std::cin, dummy);
+    exit(0);
+}
 bool is_int(std::string str) {
     for (int i = 0; i < str.length(); i++)
         if (isdigit(str[i]) == false)
             return false;
     return true;
 }
-void hex_string(char str[], int length)
-{
+void hex_string(char str[], int length) {
     std::array<char,16> hexchr { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' };
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     shuffle(hexchr.begin(), hexchr.end(), std::default_random_engine(seed));
@@ -30,9 +40,7 @@ void hex_string(char str[], int length)
     }
     str[length] = 0;
 }
-
-int msg1()
-{
+int msg1() {
     int num;
     std::string n;
     std::cout << "How many MAC Addresses?\n";
@@ -47,8 +55,7 @@ int msg1()
         return 0;
     }
 }
-int msg2()
-{
+int msg2() {
     int num;
     std::string n2;
     std::cout << "\nWould you like to save to mac.txt? (0 = no | 1 = yes)\n";
@@ -64,6 +71,7 @@ int msg2()
     }
 
     std::cout << "\nGenerating please wait...\n";
+
 }
 void DoGen(int num) {
     char hex[30];
@@ -77,6 +85,7 @@ void DoGen(int num) {
         hex_string(hex, 12);
         std::cout << hex << "\n";
     }
+    pause();
 }
 void DoGen2(int num, std::string filename) {
     char hex[30];
@@ -96,20 +105,9 @@ void DoGen2(int num, std::string filename) {
     std::cout << "Saved file to: " + filename + "\n";
     exit(0);
 }
-void pause()
-{
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::string dummy;
-    std::cout << "Press any key to exit . . .";
-    std::getline(std::cin, dummy);
-    exit(0);
-}
-int main()
-{
-    int num, num2;
+
+int main() {
     std::string n2;
-    
     num = msg1();
     if (num == 0) {
         std::cout << "You entered an invalid option\n";
@@ -119,12 +117,14 @@ int main()
             num2 = msg2();
             if (num2 == 0) {
                 std::cout << "[MAC Address List]\n";
-                DoGen(num);
+                std::thread threadObj(DoGen, num);
+                threadObj.join();
             }
             else {
-                DoGen2(num, "mac.txt");
+                std::thread threadObj2(DoGen2, num, "mac.txt");
+                threadObj2.join();
+
             }
         }
-    //pause();
     return 0;
 }
